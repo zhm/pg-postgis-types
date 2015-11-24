@@ -2,7 +2,7 @@
 
 Use PostGIS geometry types with [node-postgres](https://github.com/brianc/node-postgres).
 
-This module registers parsers for the PostGIS geometry types.
+This module registers parsers for the PostGIS geometry types. You can also plug in your own WKB parser.
 
 ## Installation
 
