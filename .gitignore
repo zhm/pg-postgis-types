@@ -1,0 +1,5 @@
+node_modules
+tmp/
+nohup.out
+npm-debug.log
+*.pid
