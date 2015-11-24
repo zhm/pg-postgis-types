@@ -1,6 +1,6 @@
 # pg-postgis-types [![Build Status](https://travis-ci.org/zhm/pg-postgis-types.svg?branch=master)](https://travis-ci.org/zhm/pg-postgis-types)
 
-Use custom data types with [node-postgres](https://github.com/brianc/node-postgres).
+Use PostGIS geometry types with [node-postgres](https://github.com/brianc/node-postgres).
 
 This module registers parsers for the PostGIS geometry types.
 
