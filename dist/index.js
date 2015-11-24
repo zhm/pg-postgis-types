@@ -18,7 +18,7 @@ var _pgCustomTypes2 = _interopRequireDefault(_pgCustomTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var TYPENAMES = new Set(['geometry', 'geometry_dump', 'geography', 'box2d', 'box3d', '_geometry', '_geometry_dump', '_geography', '_box2d', '_box3d']);
+var TYPENAMES = ['geometry', 'geometry_dump', 'geography', 'box2d', 'box3d', '_geometry', '_geometry_dump', '_geography', '_box2d', '_box3d'];
 
 var GEOMETRY_OID = null;
 var GEOGRAPHY_OID = null;

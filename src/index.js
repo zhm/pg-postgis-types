@@ -2,16 +2,16 @@ import wkx from 'wkx';
 import array from 'postgres-array';
 import types from 'pg-custom-types';
 
-const TYPENAMES = new Set(['geometry',
-                           'geometry_dump',
-                           'geography',
-                           'box2d',
-                           'box3d',
-                           '_geometry',
-                           '_geometry_dump',
-                           '_geography',
-                           '_box2d',
-                           '_box3d']);
+const TYPENAMES = [ 'geometry',
+                    'geometry_dump',
+                    'geography',
+                    'box2d',
+                    'box3d',
+                    '_geometry',
+                    '_geometry_dump',
+                    '_geography',
+                    '_box2d',
+                    '_box3d' ];
 
 let GEOMETRY_OID = null;
 let GEOGRAPHY_OID = null;
