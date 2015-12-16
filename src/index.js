@@ -85,4 +85,7 @@ postgis.setGeometryParser = function (parser) {
   parseGeometryHandler = parser;
 };
 
+postgis.names = types.names;
+postgis.oids = types.oids;
+
 export default postgis;

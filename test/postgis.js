@@ -70,4 +70,8 @@ describe('custom types', () => {
       done();
     });
   });
+
+  it('converts type names to oids', function () {
+    postgis.names[postgis.oids['geometry']].should.eql('geometry');
+  });
 });
