@@ -136,5 +136,8 @@ postgis.setGeometryParser = function (parser) {
   parseGeometryHandler = parser;
 };
 
+postgis.names = _pgCustomTypes2.default.names;
+postgis.oids = _pgCustomTypes2.default.oids;
+
 exports.default = postgis;
 //# sourceMappingURL=index.js.map
