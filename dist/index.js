@@ -214,5 +214,7 @@ postgis.typeobj = function (mod) {
   };
 };
 
+postgis.geometryTypes = POSTGIS_TYPES;
+
 exports.default = postgis;
 //# sourceMappingURL=index.js.map
