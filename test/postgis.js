@@ -72,6 +72,34 @@ describe('custom types', () => {
   });
 
   it('converts type names to oids', function () {
-    postgis.names[postgis.oids['geometry']].should.eql('geometry');
+    postgis.names[postgis.oids.geometry].should.eql('geometry');
+  });
+
+  it('produces the full type name from typmods', function (done) {
+    exec('SELECT geom FROM test', (err, results) => {
+      if (err) {
+        return done(err);
+      }
+
+      const type = postgis.typename(results.fields[0].dataTypeModifier);
+
+      type.should.eql('(Point,4326)');
+
+      done();
+    });
+  });
+
+  it('produces the full type name from typmods', function (done) {
+    exec("SELECT ST_GeomFromText('LINESTRING(1 2, 3 4, 5 6)', 4326)", (err, results) => {
+      if (err) {
+        return done(err);
+      }
+
+      const type = postgis.typename(results.fields[0].dataTypeModifier);
+
+      type.should.eql('(Point,4326)');
+
+      done();
+    });
   });
 });

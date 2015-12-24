@@ -88,4 +88,91 @@ postgis.setGeometryParser = function (parser) {
 postgis.names = types.names;
 postgis.oids = types.oids;
 
+const POSTGIS_TYPES = [
+  'Unknown',
+  'Point',
+  'LineString',
+  'Polygon',
+  'MultiPoint',
+  'MultiLineString',
+  'MultiPolygon',
+  'GeometryCollection',
+  'CircularString',
+  'CompoundCurve',
+  'CurvePolygon',
+  'MultiCurve',
+  'MultiSurface',
+  'PolyhedralSurface',
+  'Triangle',
+  'Tin'
+];
+
+postgis.srid = function (mod) {
+  return (((mod) & 0x1FFFFF00) << 3) >> 11;
+};
+
+postgis.type = function (mod) {
+  return (mod & 0x000000FC) >> 2;
+};
+
+postgis.z = function (mod) {
+  return (mod & 0x00000002) >> 1;
+};
+
+postgis.m = function (mod) {
+  return mod & 0x00000001;
+};
+
+postgis.ndims = function (mod) {
+  return 2 + postgis.z(mod) + postgis.m(mod);
+};
+
+postgis.typename = function (mod) {
+  const {type, srid, z, m} = postgis.typeobj(mod);
+
+  if (mod < 0) {
+    return '';
+  }
+
+  let name = '';
+
+  if (!(type || srid || z | m)) {
+    return '';
+  }
+
+  name += '(';
+
+  if (type) {
+    name += POSTGIS_TYPES[type];
+  } else {
+    name += 'Geometry';
+  }
+
+  if (z) {
+    name += 'Z';
+  }
+
+  if (m) {
+    name += 'M';
+  }
+
+  if (srid > 0) {
+    name += ',' + srid;
+  }
+
+  name += ')';
+
+  return name;
+};
+
+postgis.typeobj = function (mod) {
+  return {
+    type: postgis.type(mod),
+    srid: postgis.srid(mod),
+    z: postgis.z(mod),
+    m: postgis.m(mod),
+    ndims: postgis.ndims(mod)
+  };
+};
+
 export default postgis;
