@@ -1,3 +1,6 @@
+# v1.0.4
+* Add geometry type array to exports
+
 # v1.0.3
 * Add support for PostGIS typmods
 

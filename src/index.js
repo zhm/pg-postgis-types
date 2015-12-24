@@ -175,4 +175,6 @@ postgis.typeobj = function (mod) {
   };
 };
 
+postgis.geometryTypes = POSTGIS_TYPES;
+
 export default postgis;
