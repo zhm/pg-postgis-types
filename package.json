@@ -1,6 +1,6 @@
 {
   "name": "pg-postgis-types",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "PostGIS data types for node-postgres",
   "homepage": "http://github.com/zhm/pg-postgis-types",
   "main": "dist/index.js",
@@ -15,7 +15,7 @@
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "git://github.com/zhm/pg-custom-types.git"
+    "url": "git://github.com/zhm/pg-postgis-types.git"
   },
   "peerDependencies": {
     "pg": "4.x"
