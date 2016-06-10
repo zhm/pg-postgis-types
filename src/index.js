@@ -14,7 +14,10 @@ const TYPENAMES = [ 'geometry',
                     '_box3d' ];
 
 let GEOMETRY_OID = null;
+let GEOMETRY_ARRAY_OID = null;
+
 let GEOGRAPHY_OID = null;
+let GEOGRAPHY_ARRAY_OID = null;
 
 let parseGeometryHandler = function (value) {
   return wkx.Geometry.parse(new Buffer(value, 'hex'));
@@ -71,14 +74,17 @@ function postgis(postgres, connection, callback) {
     }
 
     GEOMETRY_OID = res.geometry;
+    GEOMETRY_ARRAY_OID = res._geometry;
     GEOGRAPHY_OID = res.geography;
+    GEOGRAPHY_ARRAY_OID = res._geography;
 
     callback();
   });
 }
 
 postgis.isGeometryType = function (oid) {
-  return oid === GEOMETRY_OID || oid === GEOGRAPHY_OID;
+  return oid === GEOMETRY_OID || oid === GEOGRAPHY_OID ||
+         oid === GEOMETRY_ARRAY_OID || oid === GEOGRAPHY_ARRAY_OID;
 };
 
 postgis.setGeometryParser = function (parser) {

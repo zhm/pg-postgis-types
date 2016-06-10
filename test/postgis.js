@@ -89,7 +89,7 @@ describe('custom types', () => {
     });
   });
 
-  it('produces the full type name from typmods', function (done) {
+  it('produces an empty type name from typmods', function (done) {
     exec("SELECT ST_GeomFromText('LINESTRING(1 2, 3 4, 5 6)', 4326)", (err, results) => {
       if (err) {
         return done(err);
@@ -97,7 +97,19 @@ describe('custom types', () => {
 
       const type = postgis.typename(results.fields[0].dataTypeModifier);
 
-      type.should.eql('(Point,4326)');
+      type.should.eql('');
+
+      done();
+    });
+  });
+
+  it('detects the array types', function (done) {
+    exec("SELECT ARRAY[ST_GeomFromText('POINT(1 1)'), ST_GeomFromText('POINT(1 1)')]", (err, results) => {
+      if (err) {
+        return done(err);
+      }
+
+      postgis.isGeometryType(results.fields[0].dataTypeID).should.eql(true);
 
       done();
     });

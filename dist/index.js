@@ -21,7 +21,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var TYPENAMES = ['geometry', 'geometry_dump', 'geography', 'box2d', 'box3d', '_geometry', '_geometry_dump', '_geography', '_box2d', '_box3d'];
 
 var GEOMETRY_OID = null;
+var GEOMETRY_ARRAY_OID = null;
+
 var GEOGRAPHY_OID = null;
+var GEOGRAPHY_ARRAY_OID = null;
 
 var parseGeometryHandler = function parseGeometryHandler(value) {
   return _wkx2.default.Geometry.parse(new Buffer(value, 'hex'));
@@ -122,14 +125,16 @@ function postgis(postgres, connection, callback) {
     }
 
     GEOMETRY_OID = res.geometry;
+    GEOMETRY_ARRAY_OID = res._geometry;
     GEOGRAPHY_OID = res.geography;
+    GEOGRAPHY_ARRAY_OID = res._geography;
 
     callback();
   });
 }
 
 postgis.isGeometryType = function (oid) {
-  return oid === GEOMETRY_OID || oid === GEOGRAPHY_OID;
+  return oid === GEOMETRY_OID || oid === GEOGRAPHY_OID || oid === GEOMETRY_ARRAY_OID || oid === GEOGRAPHY_ARRAY_OID;
 };
 
 postgis.setGeometryParser = function (parser) {

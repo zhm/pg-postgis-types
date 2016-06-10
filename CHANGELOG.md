@@ -1,3 +1,6 @@
+# v1.1.0
+* isGeometryType now supports `geometry[]` and `geography[]` array types
+
 # v1.0.4
 * Add geometry type array to exports
 
