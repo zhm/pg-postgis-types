@@ -18,6 +18,8 @@ var _pgCustomTypes2 = _interopRequireDefault(_pgCustomTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var POSTGIS = 'postgis';
+
 var TYPENAMES = ['geometry', 'geometry_dump', 'geography', 'box2d', 'box3d', '_geometry', '_geometry_dump', '_geography', '_box2d', '_box3d'];
 
 var GEOMETRY_OID = null;
@@ -88,11 +90,11 @@ var parsers = {
 };
 
 function postgis(postgres, connection, callback) {
-  if (_pgCustomTypes2.default.oids.geometry != null) {
+  if (_pgCustomTypes2.default.oids[POSTGIS] && _pgCustomTypes2.default.oids[POSTGIS].geometry != null) {
     return callback();
   }
 
-  (0, _pgCustomTypes2.default)(postgres, connection, TYPENAMES, function (err, res) {
+  (0, _pgCustomTypes2.default)(postgres, connection, POSTGIS, TYPENAMES, function (err, res) {
     if (err) {
       return callback(err);
     }
@@ -129,6 +131,9 @@ function postgis(postgres, connection, callback) {
     GEOGRAPHY_OID = res.geography;
     GEOGRAPHY_ARRAY_OID = res._geography;
 
+    postgis.names = _pgCustomTypes2.default.names[POSTGIS];
+    postgis.oids = _pgCustomTypes2.default.oids[POSTGIS];
+
     callback();
   });
 }
@@ -140,9 +145,6 @@ postgis.isGeometryType = function (oid) {
 postgis.setGeometryParser = function (parser) {
   parseGeometryHandler = parser;
 };
-
-postgis.names = _pgCustomTypes2.default.names;
-postgis.oids = _pgCustomTypes2.default.oids;
 
 var POSTGIS_TYPES = ['Unknown', 'Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection', 'CircularString', 'CompoundCurve', 'CurvePolygon', 'MultiCurve', 'MultiSurface', 'PolyhedralSurface', 'Triangle', 'Tin'];
 

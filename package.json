@@ -1,6 +1,6 @@
 {
   "name": "pg-postgis-types",
-  "version": "1.1.0",
+  "version": "2.1.0",
   "description": "PostGIS data types for node-postgres",
   "homepage": "http://github.com/zhm/pg-postgis-types",
   "main": "dist/index.js",
@@ -30,7 +30,7 @@
     "pg": "^4.4.3"
   },
   "dependencies": {
-    "pg-custom-types": "^1.0.2",
+    "pg-custom-types": "^2.0.0",
     "postgres-array": "^1.0.0",
     "wkx": "^0.1.0"
   },

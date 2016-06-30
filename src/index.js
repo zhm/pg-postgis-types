@@ -2,6 +2,8 @@ import wkx from 'wkx';
 import array from 'postgres-array';
 import types from 'pg-custom-types';
 
+const POSTGIS = 'postgis';
+
 const TYPENAMES = [ 'geometry',
                     'geometry_dump',
                     'geography',
@@ -58,11 +60,11 @@ const parsers = {
 };
 
 function postgis(postgres, connection, callback) {
-  if (types.oids.geometry != null) {
+  if (types.oids[POSTGIS] && types.oids[POSTGIS].geometry != null) {
     return callback();
   }
 
-  types(postgres, connection, TYPENAMES, (err, res) => {
+  types(postgres, connection, POSTGIS, TYPENAMES, (err, res) => {
     if (err) {
       return callback(err);
     }
@@ -78,6 +80,9 @@ function postgis(postgres, connection, callback) {
     GEOGRAPHY_OID = res.geography;
     GEOGRAPHY_ARRAY_OID = res._geography;
 
+    postgis.names = types.names[POSTGIS];
+    postgis.oids = types.oids[POSTGIS];
+
     callback();
   });
 }
@@ -90,9 +95,6 @@ postgis.isGeometryType = function (oid) {
 postgis.setGeometryParser = function (parser) {
   parseGeometryHandler = parser;
 };
-
-postgis.names = types.names;
-postgis.oids = types.oids;
 
 const POSTGIS_TYPES = [
   'Unknown',
