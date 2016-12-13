@@ -1,8 +1,11 @@
 import pg from 'pg';
 import chai from 'chai';
 import postgis from '../src';
+import pgtypes from 'pg-custom-types';
 
 chai.should();
+
+const KEY = null;
 
 const connection = 'pg://postgres@localhost/pg_custom_types';
 
@@ -26,7 +29,7 @@ const exec = (sql, callback) => {
 
 describe('custom types', () => {
   before((done) => {
-    postgis(pg, connection, done);
+    postgis(pgtypes.fetcher(pg, connection), KEY, done);
   });
 
   it('parses postgis geometries', function (done) {
@@ -72,7 +75,7 @@ describe('custom types', () => {
   });
 
   it('converts type names to oids', function () {
-    postgis.names[postgis.oids.geometry].should.eql('geometry');
+    postgis.getTypeName(postgis.getTypeOID('geometry', KEY), KEY).should.eql('geometry');
   });
 
   it('produces the full type name from typmods', function (done) {
@@ -109,7 +112,7 @@ describe('custom types', () => {
         return done(err);
       }
 
-      postgis.isGeometryType(results.fields[0].dataTypeID).should.eql(true);
+      postgis.isGeometryType(results.fields[0].dataTypeID, KEY).should.eql(true);
 
       done();
     });

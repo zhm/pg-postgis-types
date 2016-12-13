@@ -12,29 +12,30 @@ npm install pg-postgis-types
 
 ### Documentation
 
-### `postgis(pg, connection, callback)`
+### `postgis(fetcher, key, callback)`
 
 Fetches the OIDs for the given types.
 
 ### Parameters
 
-| parameter       | type               | description                                               |
-| --------------- | ------------------ | --------------------------------------------------------- |
-| `pg`            | Object             | The pg object from `require('pg')`                        |
-| `connection`    | String             | The connection string to use when fetching the types      |
-| `callback`      | Function           | The callback to call after the types are fetched          |
+| parameter       | type               | description                                                           |
+| --------------- | ------------------ | --------------------------------------------------------------------- |
+| `fetcher`       | Function           | The function to query of the form `function (sql, callback)           |
+| `key`           | String             | A unique string to key the type map with (e.g. the connection string) |
+| `callback`      | Function           | The callback to call after the types are fetched                      |
 
 Callback is called with an error argument.
 
-### `postgis.isGeometryType(oid)`
+### `postgis.isGeometryType(oid, key)`
 
 Returns true if the given OID is a geometry or geography type
 
 ### Parameters
 
-| parameter       | type               | description                                               |
-| --------------- | ------------------ | --------------------------------------------------------- |
-| `oid`           | Number             | The oid of a column                                       |
+| parameter       | type               | description                                                           |
+| --------------- | ------------------ | --------------------------------------------------------------------- |
+| `oid`           | Number             | The oid of a column                                                   |
+| `key`           | String             | A unique string to key the type map with (e.g. the connection string) |
 
 
 ### `postgis.setGeometryParser(parser)`
@@ -53,9 +54,13 @@ can use this if you want to use your own WKB parser.
 ## Example
 
 ```js
+var pg = require('pg');
 var postgis = require('pg-postgis-types');
+var pgtypes = require('pg-custom-types');
 
-postgis(pg, connection, (err, oids) {
+var connection = 'some connection string';
+
+postgis(pgtypes.fetcher(pg, connection), null, (err, oids) {
   if (err) {
     throw err;
   }

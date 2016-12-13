@@ -1,6 +1,7 @@
 import wkx from 'wkx';
 import array from 'postgres-array';
 import types from 'pg-custom-types';
+import pg from 'pg';
 
 const POSTGIS = 'postgis';
 
@@ -15,15 +16,21 @@ const TYPENAMES = [ 'geometry',
                     '_box2d',
                     '_box3d' ];
 
-let GEOMETRY_OID = null;
-let GEOMETRY_ARRAY_OID = null;
+const GEOMETRY_OIDS = {};
+const GEOMETRY_ARRAY_OIDS = {};
 
-let GEOGRAPHY_OID = null;
-let GEOGRAPHY_ARRAY_OID = null;
+const GEOGRAPHY_OIDS = {};
+const GEOGRAPHY_ARRAY_OIDS = {};
+
+const TYPE_PARSERS = {};
 
 let parseGeometryHandler = function (value) {
   return wkx.Geometry.parse(new Buffer(value, 'hex'));
 };
+
+function typeNameKey(key) {
+  return key ? POSTGIS + '-' + key : POSTGIS;
+}
 
 function parseGeometry(value) {
   return parseGeometryHandler(value);
@@ -59,41 +66,89 @@ const parsers = {
   _box3d: parsePostgisArray(parseBox)
 };
 
-function postgis(postgres, connection, callback) {
-  if (types.oids[POSTGIS] && types.oids[POSTGIS].geometry != null) {
+function postgis(exec, key, callback) {
+  key = typeNameKey(key);
+
+  if (types.oids[key] && types.oids[key].geometry != null) {
     return callback();
   }
 
-  types(postgres, connection, POSTGIS, TYPENAMES, (err, res) => {
+  types(exec, key, TYPENAMES, (err, res) => {
     if (err) {
       return callback(err);
     }
 
+    if (!TYPE_PARSERS[key]) {
+      TYPE_PARSERS[key] = {};
+    }
+
+    if (!GEOMETRY_OIDS[key]) {
+      GEOMETRY_OIDS[key] = {};
+    }
+
+    if (!GEOMETRY_ARRAY_OIDS[key]) {
+      GEOMETRY_ARRAY_OIDS[key] = {};
+    }
+
+    if (!GEOGRAPHY_OIDS[key]) {
+      GEOGRAPHY_OIDS[key] = {};
+    }
+
+    if (!GEOGRAPHY_ARRAY_OIDS[key]) {
+      GEOGRAPHY_ARRAY_OIDS[key] = {};
+    }
+
+    if (!postgis.names) {
+      postgis.names = {};
+    }
+
+    if (!postgis.oids) {
+      postgis.oids = {};
+    }
+
     for (let parser of Object.keys(parsers)) {
       if (res[parser]) {
-        postgres.types.setTypeParser(+res[parser], parsers[parser]);
+        pg.types.setTypeParser(+res[parser], parsers[parser]);
+
+        TYPE_PARSERS[key][+res[parser]] = parsers[parser];
       }
     }
 
-    GEOMETRY_OID = res.geometry;
-    GEOMETRY_ARRAY_OID = res._geometry;
-    GEOGRAPHY_OID = res.geography;
-    GEOGRAPHY_ARRAY_OID = res._geography;
+    GEOMETRY_OIDS[key] = res.geometry;
+    GEOMETRY_ARRAY_OIDS[key] = res._geometry;
+    GEOGRAPHY_OIDS[key] = res.geography;
+    GEOGRAPHY_ARRAY_OIDS[key] = res._geography;
 
-    postgis.names = types.names[POSTGIS];
-    postgis.oids = types.oids[POSTGIS];
+    postgis.names[key] = types.names[key];
+    postgis.oids[key] = types.oids[key];
 
     callback();
   });
 }
 
-postgis.isGeometryType = function (oid) {
-  return oid === GEOMETRY_OID || oid === GEOGRAPHY_OID ||
-         oid === GEOMETRY_ARRAY_OID || oid === GEOGRAPHY_ARRAY_OID;
+postgis.isGeometryType = function (oid, key) {
+  key = typeNameKey(key);
+
+  return oid === GEOMETRY_OIDS[key] || oid === GEOGRAPHY_OIDS[key] ||
+         oid === GEOMETRY_ARRAY_OIDS[key] || oid === GEOGRAPHY_ARRAY_OIDS[key];
 };
 
 postgis.setGeometryParser = function (parser) {
   parseGeometryHandler = parser;
+};
+
+postgis.getTypeParser = function (oid, key) {
+  key = typeNameKey(key);
+
+  return TYPE_PARSERS[key][+oid];
+};
+
+postgis.getTypeName = function (oid, key) {
+  return types.getTypeName(oid, typeNameKey(key));
+};
+
+postgis.getTypeOID = function (name, key) {
+  return types.getTypeOID(name, typeNameKey(key));
 };
 
 const POSTGIS_TYPES = [
